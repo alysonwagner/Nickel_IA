@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NICKEL_IA | Acesso</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <script>
+        // Configuração base do Tailwind (Cores e Animações)
+        tailwind.config = { 
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    animation: { 'fade-in': 'fadeIn 0.4s ease-out forwards' },
+                    keyframes: { fadeIn: { '0%': { opacity: '0', transform: 'translateY(10px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } } }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* TÉCNICA MATRIX: Borda Gradiente Transparente com LED Glow */
+        .box-led-border {
+            position: relative;
+        }
+        .box-led-border::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: 1.5rem; /* rounded-3xl do tailwind */
+            padding: 2px; /* Espessura da linha de LED */
+            background: linear-gradient(to right, #10b981, #3b82f6); /* Verde (Emerald) para Azul */
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+            z-index: 10;
+        }
+        /* Brilho extra vazando da borda */
+        .box-led-glow::after {
+            content: "";
+            position: absolute;
+            inset: -2px;
+            border-radius: 1.6rem;
+            background: linear-gradient(to right, #10b981, #3b82f6);
+            filter: blur(8px);
+            opacity: 0.4;
+            z-index: -1;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen bg-slate-900 text-slate-200 relative font-sans transition-colors duration-300 selection:bg-emerald-500 selection:text-white overflow-hidden">
+
+    <div class="absolute top-[-10%] left-[-10%] w-96 h-96 bg-emerald-600/20 rounded-full blur-[100px] pointer-events-none -z-10"></div>
+    <div class="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-blue-600/20 rounded-full blur-[100px] pointer-events-none -z-10"></div>
+
+    <div class="flex-1 flex items-center justify-center p-4 animate-fade-in z-10 w-full h-full">
+        
+        <div class="bg-slate-900/80 backdrop-blur-2xl p-8 rounded-3xl shadow-2xl w-full max-w-md relative box-led-border box-led-glow">
+            
+            <div class="flex justify-center mb-8 mt-2 relative z-20">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-slate-800 to-black border border-slate-700 flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.3)]">
+                        <i class="fas fa-coins text-emerald-400 text-2xl"></i>
+                    </div>
+                    <h1 class="text-3xl font-black tracking-tighter text-white">
+                        NICKEL<span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-blue-500">_IA</span>
+                    </h1>
+                </div>
+            </div>
+
+            <div class="flex p-1 bg-slate-950/50 rounded-xl mb-8 border border-slate-800 relative z-20">
+                <button onclick="toggleForm('login')" id="tab-login" class="flex-1 py-2.5 text-sm font-bold rounded-lg bg-slate-800 text-emerald-400 shadow-md border border-slate-700 transition-all">Login</button>
+                <button onclick="toggleForm('register')" id="tab-register" class="flex-1 py-2.5 text-sm font-bold rounded-lg text-slate-500 hover:text-slate-300 border border-transparent transition-all">Nova Conta</button>
+            </div>
+
+            <form id="form-login" class="space-y-5 block relative z-20">
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">E-mail Corporativo</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500"><i class="fas fa-envelope"></i></div>
+                        <input type="email" id="login-email" required placeholder="gestor@empresa.com" class="w-full pl-11 pr-4 py-3.5 bg-slate-900/50 border border-slate-700 rounded-xl focus:border-emerald-500 focus:outline-none text-white transition-colors placeholder-slate-600 font-medium text-sm">
+                    </div>
+                </div>
+                <div>
+                    <div class="flex justify-between items-center mb-1.5">
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest">Senha Master</label>
+                        <a href="#" class="text-[10px] font-bold text-emerald-500 hover:text-emerald-400 transition-colors">Esqueceu?</a>
+                    </div>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500"><i class="fas fa-lock"></i></div>
+                        <input type="password" id="login-password" required placeholder="••••••••" class="w-full pl-11 pr-4 py-3.5 bg-slate-900/50 border border-slate-700 rounded-xl focus:border-emerald-500 focus:outline-none text-white transition-colors placeholder-slate-600 font-medium text-sm">
+                    </div>
+                </div>
+                
+                <div class="flex items-center mt-2">
+                    <input id="remember-me" type="checkbox" checked class="w-4 h-4 text-emerald-500 bg-slate-900 border-slate-700 rounded focus:ring-emerald-500 focus:ring-2 cursor-pointer">
+                    <label for="remember-me" class="ml-2 text-xs font-medium text-slate-400 cursor-pointer select-none">Manter conexão segura</label>
+                </div>
+
+                <button type="submit" id="btn-login" class="w-full bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white font-black py-4 rounded-xl shadow-[0_0_20px_rgba(16,185,129,0.3)] transition-all transform hover:-translate-y-0.5 mt-4 flex items-center justify-center gap-2 text-sm">
+                    <i class="fas fa-sign-in-alt"></i> Entrar na Plataforma
+                </button>
+            </form>
+
+            <form id="form-register" class="space-y-5 hidden relative z-20">
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Nome do Gestor</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500"><i class="fas fa-user"></i></div>
+                        <input type="text" id="reg-name" required placeholder="Seu Nome Completo" class="w-full pl-11 pr-4 py-3.5 bg-slate-900/50 border border-slate-700 rounded-xl focus:border-emerald-500 focus:outline-none text-white transition-colors placeholder-slate-600 font-medium text-sm">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">E-mail</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500"><i class="fas fa-envelope"></i></div>
+                        <input type="email" id="reg-email" required placeholder="seu@email.com" class="w-full pl-11 pr-4 py-3.5 bg-slate-900/50 border border-slate-700 rounded-xl focus:border-emerald-500 focus:outline-none text-white transition-colors placeholder-slate-600 font-medium text-sm">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Crie uma Senha</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500"><i class="fas fa-key"></i></div>
+                        <input type="password" id="reg-password" required minlength="6" placeholder="Mínimo 6 caracteres" class="w-full pl-11 pr-4 py-3.5 bg-slate-900/50 border border-slate-700 rounded-xl focus:border-emerald-500 focus:outline-none text-white transition-colors placeholder-slate-600 font-medium text-sm">
+                    </div>
+                </div>
+                <button type="submit" id="btn-register" class="w-full bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white font-black py-4 rounded-xl shadow-[0_0_20px_rgba(16,185,129,0.3)] transition-all transform hover:-translate-y-0.5 mt-4 flex items-center justify-center gap-2 text-sm">
+                    <i class="fas fa-check-circle"></i> Concluir Cadastro
+                </button>
+            </form>
+
+            <div id="auth-msg" class="mt-4 text-center text-sm hidden rounded-xl p-3 font-bold shadow-sm relative z-20"></div>
+            
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // 1. CONFIGURAÇÕES CRÍTICAS
+        // ==========================================
+        const SUPABASE_URL = 'https://wghaaypsbhxxmneyccsw.supabase.co'; 
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndnaGFheXBzYmh4eG1uZXljY3N3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM1MDE4NTQsImV4cCI6MjA4OTA3Nzg1NH0.GjO23UOuliZjeNtKjvUJjgUru0_dVxeyGIRLH7dHkgI';
+        const supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        const formLogin = document.getElementById('form-login');
+        const formRegister = document.getElementById('form-register');
+        const tabLogin = document.getElementById('tab-login');
+        const tabRegister = document.getElementById('tab-register');
+        const msgBox = document.getElementById('auth-msg');
+
+        // ==========================================
+        // 2. CHECAGEM DE SESSÃO ATIVA (Redirecionamento)
+        // ==========================================
+        window.onload = async () => {
+            const { data: { session } } = await supa.auth.getSession();
+            if (session) {
+                window.location.replace("dashboard.html");
+            }
+        };
+
+        // ==========================================
+        // 3. LÓGICA DE INTERFACE (Trocar Abas)
+        // ==========================================
+        function toggleForm(type) {
+            msgBox.classList.add('hidden'); // Limpa alertas ao trocar
+            
+            // Classes Ativas (Padronizadas na cor Emerald para ambos)
+            const activeClasses = ['bg-slate-800', 'text-emerald-400', 'shadow-md', 'border-slate-700'];
+            // Classes Inativas
+            const inactiveClasses = ['text-slate-500', 'border-transparent'];
+
+            if (type === 'login') {
+                formLogin.classList.remove('hidden');
+                formLogin.classList.add('block');
+                formRegister.classList.add('hidden');
+                formRegister.classList.remove('block');
+                
+                // Ativa a aba Login
+                tabLogin.classList.add(...activeClasses);
+                tabLogin.classList.remove(...inactiveClasses);
+                
+                // Desativa a aba Registro
+                tabRegister.classList.remove(...activeClasses);
+                tabRegister.classList.add(...inactiveClasses);
+            } else {
+                formRegister.classList.remove('hidden');
+                formRegister.classList.add('block');
+                formLogin.classList.add('hidden');
+                formLogin.classList.remove('block');
+                
+                // Ativa a aba Registro (Com a mesma cor Emerald)
+                tabRegister.classList.add(...activeClasses);
+                tabRegister.classList.remove(...inactiveClasses);
+                
+                // Desativa a aba Login
+                tabLogin.classList.remove(...activeClasses);
+                tabLogin.classList.add(...inactiveClasses);
+            }
+        }
+
+        // Exibe mensagem bonita de erro ou sucesso adaptada ao tema escuro
+        function mostrarMensagem(texto, isError = true) {
+            msgBox.textContent = texto;
+            msgBox.classList.remove('hidden');
+            if (isError) {
+                msgBox.className = 'mt-4 text-center text-xs md:text-sm rounded-xl p-3 bg-rose-500/10 text-rose-400 border border-rose-500/20 block animate-fade-in';
+            } else {
+                msgBox.className = 'mt-4 text-center text-xs md:text-sm rounded-xl p-3 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 block animate-fade-in';
+            }
+        }
+
+        // ==========================================
+        // 4. MOTOR DO LOGIN
+        // ==========================================
+        formLogin.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btn-login');
+            const originalText = btn.innerHTML;
+            
+            const email = document.getElementById('login-email').value.trim();
+            const pass = document.getElementById('login-password').value;
+
+            btn.innerHTML = '<i class="fas fa-spinner animate-spin"></i> Autenticando...';
+            btn.disabled = true;
+            msgBox.classList.add('hidden');
+
+            const { data, error } = await supa.auth.signInWithPassword({ email: email, password: pass });
+
+            if (error) {
+                mostrarMensagem("Credenciais inválidas. Verifique seu e-mail e senha.");
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            } else {
+                window.location.replace("dashboard.html");
+            }
+        });
+
+        // ==========================================
+        // 5. MOTOR DE CADASTRO (Auth + CRM Integrados)
+        // ==========================================
+        formRegister.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btn-register');
+            const originalText = btn.innerHTML;
+            
+            const nome = document.getElementById('reg-name').value.trim();
+            const email = document.getElementById('reg-email').value.trim();
+            const pass = document.getElementById('reg-password').value;
+
+            btn.innerHTML = '<i class="fas fa-spinner animate-spin"></i> Forjando Acesso...';
+            btn.disabled = true;
+            msgBox.classList.add('hidden');
+
+            // 1. Cria usuário na Autenticação Oficial (Segurança)
+            const { data: authData, error: authError } = await supa.auth.signUp({
+                email: email,
+                password: pass,
+            });
+
+            if (authError) {
+                if (authError.message.includes("already registered")) {
+                    mostrarMensagem("Este e-mail já possui uma conta ativa. Tente fazer o login.");
+                } else {
+                    mostrarMensagem("Erro ao criar conta: " + authError.message);
+                }
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                return;
+            }
+
+            // 2. Salva a Ficha do Cliente na Tabela de CRM do Gestor
+            if (authData.user) {
+                const { error: dbError } = await supa.from('clientes').insert([
+                    { 
+                        id: authData.user.id,
+                        email: email, 
+                        nome: nome,
+                        plan: 'FREE'
+                    }
+                ]);
+
+                if (dbError) {
+                    console.error("Erro interno ao atualizar CRM:", dbError);
+                }
+            }
+
+            // Deu tudo certo! Mostra a mensagem e joga pro painel em 1.5 segundos
+            mostrarMensagem("Identidade criada! Redirecionando...", false);
+            setTimeout(() => {
+                window.location.replace("dashboard.html");
+            }, 1500);
+        });
+    </script>
+</body>
+</html>

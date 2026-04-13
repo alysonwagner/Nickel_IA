@@ -1,0 +1,8 @@
+supabase==2.3.0
+python-dotenv
+python-telegram-bot==20.5
+fastapi
+uvicorn
+requests
+httpx==0.24.1
+websockets==11.0.3

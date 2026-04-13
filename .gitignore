@@ -1,0 +1,19 @@
+# 1. Ambientes Virtuais e Cache (Python)
+venv/
+.venv/
+env/
+__pycache__/
+*.pyc
+
+# 3. Painel Administrativo (Fica SÓ no seu computador)
+superadmin.html
+
+# 4. Arquivos de Sistema e Atalhos
+desktop.ini
+ngrok.lnk
+
+# Segurança de Dados (Chaves e Senhas)
+chaves
+chaves.js
+.env
+.env.local

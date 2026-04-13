@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NICKEL_IA - Criar Conta</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="bg-gray-900 flex items-center justify-center min-h-screen text-white">
+
+    <div class="bg-gray-800 p-8 rounded-xl shadow-2xl w-full max-w-md border border-gray-700">
+        
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-blue-500 mb-2">Criar Conta</h1>
+            <p class="text-gray-400">Junte-se ao NICKEL_IA e controle suas finanças</p>
+        </div>
+
+        <form id="register-form" class="space-y-5">
+            <div>
+                <label for="nome" class="block text-sm font-medium text-gray-300 mb-1">Nome Completo</label>
+                <input type="text" id="nome" required 
+                       class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-white placeholder-gray-400" 
+                       placeholder="João da Silva">
+            </div>
+
+            <div>
+                <label for="email" class="block text-sm font-medium text-gray-300 mb-1">E-mail</label>
+                <input type="email" id="email" required 
+                       class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-white placeholder-gray-400" 
+                       placeholder="seu@email.com">
+            </div>
+
+            <div>
+                <label for="password" class="block text-sm font-medium text-gray-300 mb-1">Crie uma Senha (mínimo 6 caracteres)</label>
+                <input type="password" id="password" required minlength="6"
+                       class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-white placeholder-gray-400" 
+                       placeholder="••••••••">
+            </div>
+
+            <button type="submit" id="submit-btn" 
+                    class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 mt-4">
+                Cadastrar Conta
+            </button>
+        </form>
+
+        <div class="mt-6 text-center">
+            <a href="index.html" class="text-sm text-blue-400 hover:text-blue-300 transition duration-200">
+                Já tem uma conta? Faça login aqui.
+            </a>
+        </div>
+        
+        <div id="message-box" class="mt-4 text-center text-sm hidden rounded p-2"></div>
+    </div>
+
+    <script>
+        // (1) O que mudou: Adicionado redirecionamento dinâmico para o GitHub Pages.
+        // (2) Por que mudou: Para que o link do e-mail de confirmação saiba voltar para o site na web.
+        // (3) Impacto: Cadastro agora é 100% funcional fora do localhost.
+        const SUPABASE_URL = 'https://wghaaypsbhxxmneyccsw.supabase.co'; 
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndnaGFheXBzYmh4eG1uZXljY3N3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM1MDE4NTQsImV4cCI6MjA4OTA3Nzg1NH0.GjO23UOuliZjeNtKjvUJjgUru0_dVxeyGIRLH7dHkgI';
+        const motorSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        const registerForm = document.getElementById('register-form');
+        const submitBtn = document.getElementById('submit-btn');
+        const messageBox = document.getElementById('message-box');
+
+        registerForm.addEventListener('submit', async (event) => {
+            event.preventDefault(); 
+            submitBtn.textContent = 'Processando...';
+            submitBtn.disabled = true;
+            messageBox.classList.add('hidden');
+
+            try {
+                const { data: authData, error: authError } = await motorSupabase.auth.signUp({
+                    email: document.getElementById('email').value,
+                    password: document.getElementById('password').value,
+                    options: {
+                        // Detecta automaticamente se estamos no localhost ou no GitHub
+                        emailRedirectTo: window.location.origin + window.location.pathname.replace('cadastro.html', 'index.html')
+                    }
+                });
+
+                if (authError) throw authError;
+
+                const { error: tableError } = await motorSupabase.from('clientes').insert([
+                    {
+                        nome: document.getElementById('nome').value,
+                        email: document.getElementById('email').value,
+                        status_assinatura: 'ativo'
+                    }
+                ]);
+
+                if (tableError) throw new Error("Erro do Banco: " + tableError.message);
+                
+                messageBox.textContent = 'Sucesso! Verifique seu e-mail para confirmar.';
+                messageBox.className = 'mt-4 text-center text-sm rounded p-2 bg-green-900 text-green-300 block';
+
+            } catch (error) {
+                messageBox.textContent = error.message;
+                messageBox.className = 'mt-4 text-center text-sm rounded p-2 bg-red-900 text-red-300 block';
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Cadastrar Conta';
+            }
+        });
+    </script>
+</body>
+</html>

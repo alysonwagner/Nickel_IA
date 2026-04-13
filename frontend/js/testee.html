@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="antialiased dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>NICKEL_IA | Gestão Premium</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = { 
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    animation: { 
+                        'fade-in': 'fadeIn 0.3s ease-out forwards', 
+                        'pulse-soft': 'pulseSoft 2s cubic-bezier(0.4, 0, 0.6, 1) infinite' 
+                    },
+                    keyframes: { 
+                        fadeIn: { 
+                            '0%': { opacity: '0', transform: 'translateY(10px)' }, 
+                            '100%': { opacity: '1', transform: 'translateY(0)' } 
+                        },
+                        pulseSoft: { 
+                            '0%, 100%': { opacity: 1 }, 
+                            '50%': { opacity: .7 } 
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        .section-content { display: none; }
+        .section-content.active { display: block; animation: fadeIn 0.4s ease-out forwards; }
+        
+        .nav-link.active { 
+            @apply bg-gradient-to-r from-blue-500/10 to-purple-500/10 dark:from-blue-400/20 dark:to-purple-400/20 backdrop-blur-md text-blue-700 dark:text-white font-bold shadow-sm; 
+        }
+        .nav-link.active i { @apply text-blue-600 dark:text-purple-400; }
+        
+        .mobile-nav-link { @apply transition-all duration-300 ease-in-out; }
+        .mobile-nav-link.active { @apply text-blue-600 dark:text-white scale-110; }
+        .mobile-nav-link.active i { @apply drop-shadow-md; }
+        
+        .blur-valor { filter: blur(6px); user-select: none; color: transparent; text-shadow: 0 0 8px rgba(156, 163, 175, 0.8); }
+        .dark .blur-valor { text-shadow: 0 0 8px rgba(209, 213, 219, 0.8); }
+
+        body { transition: background-color 0.3s, color 0.3s; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        ::-webkit-scrollbar { height: 6px; width: 6px; }
+        ::-webkit-scrollbar-thumb { background: rgba(203, 213, 225, 0.5); border-radius: 10px; }
+        .dark ::-webkit-scrollbar-thumb { background: rgba(71, 85, 105, 0.5); }
+        
+        main { padding-bottom: max(5rem, env(safe-area-inset-bottom)); }
+        @media (min-width: 768px) { main { padding-bottom: 0; } }
+
+        .bot-floating-button {
+            position: fixed; bottom: 30px; right: 30px; background-color: #0088cc; color: white;
+            width: 60px; height: 60px; border-radius: 50px; text-align: center; box-shadow: 2px 2px 15px rgba(0,0,0,0.4);
+            z-index: 1000; display: flex; align-items: center; justify-content: center; text-decoration: none; transition: transform 0.2s, background-color 0.2s;
+        }
+        .bot-floating-button:hover { transform: scale(1.1); background-color: #0077b5; }
+        .bot-floating-button i { font-size: 30px; }
+
+        /* INJEÇÃO MOBILE-FIRST */
+        @media (max-width: 768px) {
+            .bot-floating-button { width: 48px; height: 48px; bottom: 85px; right: 20px; box-shadow: 2px 2px 10px rgba(0,0,0,0.3); }
+            .bot-floating-button i { font-size: 24px; }
+            .grid-cols-1.sm\:grid-cols-3 { grid-template-columns: 1fr !important; }
+            main { padding-bottom: 8rem !important; }
+            h3.text-2xl, h3.text-3xl { font-size: 1.5rem !important; }
+        }
+    </style>
+</head>
+<body class="text-slate-800 dark:text-slate-200 flex flex-col md:flex-row h-screen overflow-hidden relative">
+
+    <div id="onboardingModal" class="hidden fixed inset-0 bg-slate-900/80 backdrop-blur-md z-[100] items-center justify-center p-4 transition-opacity duration-500 opacity-0">
+        <div class="bg-white dark:bg-slate-900 p-8 rounded-3xl shadow-2xl w-full max-w-lg border border-slate-200 dark:border-slate-700/50 transform transition-all translate-y-8 flex flex-col items-center text-center relative overflow-hidden">
+            <div class="absolute -top-20 -right-20 w-48 h-48 bg-blue-500/20 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -bottom-20 -left-20 w-48 h-48 bg-purple-500/20 rounded-full blur-3xl pointer-events-none"></div>
+            
+            <div id="onboarding-step-1" class="w-full transition-opacity duration-300 z-10">
+                <div class="w-20 h-20 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-4xl shadow-lg mx-auto mb-6">
+                    <i class="fas fa-hand-sparkles"></i>
+                </div>
+                <h3 class="text-2xl font-black text-slate-900 dark:text-white mb-2">Bem-vindo(a), <span id="onboarding-user-name">Investidor</span>!</h3>
+                <p class="text-sm text-slate-600 dark:text-slate-400 mb-8 leading-relaxed">Você acaba de acessar o painel financeiro mais inteligente do mercado. Vamos te mostrar como extrair o máximo do seu novo Sócio Financeiro em passos rápidos.</p>
+                <button onclick="nextOnboardingStep(2)" class="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black py-4 rounded-xl shadow-lg hover:scale-[1.02] transition-transform">Começar Tour <i class="fas fa-arrow-right ml-2"></i></button>
+            </div>
+
+            <div id="onboarding-step-2" class="w-full transition-opacity duration-300 z-10 hidden">
+                <div class="w-20 h-20 rounded-full bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 flex items-center justify-center text-4xl shadow-inner mx-auto mb-6">
+                    <i class="fab fa-telegram-plane"></i>
+                </div>
+                <h3 class="text-2xl font-black text-slate-900 dark:text-white mb-2">Sincronize o Cérebro</h3>
+                <p class="text-sm text-slate-600 dark:text-slate-400 mb-8 leading-relaxed">Para lançar gastos por texto ou áudio sem abrir o app, use o bot <b>@nickel_ia_beta_bot</b>. Clique no botão azul flutuante no canto da tela para vincular!</p>
+                <div class="flex gap-3">
+                    <button onclick="nextOnboardingStep(1)" class="flex-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold py-4 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">Voltar</button>
+                    <button onclick="nextOnboardingStep(3)" class="flex-1 bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black py-4 rounded-xl shadow-lg hover:scale-[1.02] transition-transform">Próximo</button>
+                </div>
+            </div>
+
+            <div id="onboarding-step-3" class="w-full transition-opacity duration-300 z-10 hidden">
+                <div class="w-20 h-20 rounded-full bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-4xl shadow-inner mx-auto mb-6">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <h3 class="text-2xl font-black text-slate-900 dark:text-white mb-2">O Oráculo Trabalha pra Você</h3>
+                <p class="text-sm text-slate-600 dark:text-slate-400 mb-8 leading-relaxed">No menu lateral, acesse o <b>Oráculo IA</b>. É lá que o robô analisa o seu comportamento de consumo e projeta sua saúde financeira.</p>
+                <div class="flex gap-3">
+                    <button onclick="nextOnboardingStep(2)" class="flex-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold py-4 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">Voltar</button>
+                    <button onclick="finishOnboarding()" class="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-black py-4 rounded-xl shadow-[0_0_20px_rgba(59,130,246,0.4)] hover:scale-[1.02] transition-transform">Acessar Painel <i class="fas fa-check ml-2"></i></button>
+                </div>
+            </div>
+
+            <div class="flex justify-center gap-2 mt-8 z-10">
+                <div id="dot-1" class="w-8 h-1.5 rounded-full bg-blue-600 transition-all"></div>
+                <div id="dot-2" class="w-2 h-1.5 rounded-full bg-slate-200 dark:bg-slate-700 transition-all"></div>
+                <div id="dot-3" class="w-2 h-1.5 rounded-full bg-slate-200 dark:bg-slate-700 transition-all"></div>
+            </div>
+        </div>
+    </div>
+    <div class="absolute inset-0 bg-gradient-to-br from-slate-100 via-blue-100 to-purple-100 dark:from-blue-950 dark:via-slate-900 dark:to-purple-950 opacity-90 dark:opacity-100 -z-20"></div>
+
+    <aside id="sidebar" class="hidden md:flex w-72 bg-white/40 dark:bg-slate-900/40 backdrop-blur-2xl border-r border-white/50 dark:border-slate-700/50 flex-col shrink-0 z-20 shadow-2xl transition-all duration-300">
+        <div class="h-20 flex items-center px-6 border-b border-white/40 dark:border-slate-700/50 overflow-hidden whitespace-nowrap">
+            <div class="min-w-[2.5rem] w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center font-bold text-white shadow-lg mr-3">N</div>
+            <h1 id="logo-text" class="text-xl font-extrabold tracking-tight transition-opacity duration-300">NICKEL<span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400">_IA</span></h1>
+        </div>
+        <nav class="flex-1 p-4 space-y-2 mt-4 overflow-x-hidden hide-scrollbar pb-20">
+            <button onclick="changeTab('dash')" id="btn-dash" class="nav-link active w-full flex items-center px-5 py-3 rounded-xl gap-4 text-slate-600 dark:text-slate-400 hover:bg-white/40 dark:hover:bg-slate-800/50 transition-all whitespace-nowrap"><i class="fas fa-home text-lg min-w-[1.5rem] text-center"></i> <span class="font-semibold text-sm menu-text transition-opacity duration-300">Visão Geral</span></button>
+            <button onclick="changeTab('oraculo')" id="btn-oraculo" class="nav-link w-full flex items-center px-5 py-3 rounded-xl gap-4 text-slate-600 dark:text-slate-400 hover:bg-white/40 dark:hover:bg-slate-800/50 transition-all whitespace-nowrap"><i class="fas fa-brain text-lg min-w-[1.5rem] text-center"></i> <span class="font-semibold text-sm menu-text transition-opacity duration-300">Oráculo IA</span></button>
+            <button onclick="changeTab('fixas')" id="btn-fixas" class="nav-link w-full flex items-center px-5 py-3 rounded-xl gap-4 text-slate-600 dark:text-slate-400 hover:bg-white/40 dark:hover:bg-slate-800/50 transition-all whitespace-nowrap"><i class="fas fa-calendar-alt text-lg min-w-[1.5rem] text-center"></i> <span class="font-semibold text-sm menu-text transition-opacity duration-300">Planejamento</span></button>
+            <button onclick="changeTab('metas')" id="btn-metas" class="nav-link w-full flex items-center px-5 py-3 rounded-xl gap-4 text-slate-600 dark:text-slate-400 hover:bg-white/40 dark:hover:bg-slate-800/50 transition-all whitespace-nowrap"><i class="fas fa-bullseye text-lg min-w-[1.5rem] text-center"></i> <span class="font-semibold text-sm menu-text transition-opacity duration-300">Metas e Sonhos</span></button>
+            <button onclick="changeTab('invest')" id="btn-invest" class="nav-link w-full flex items-center px-5 py-3 rounded-xl gap-4 text-slate-600 dark:text-slate-400 hover:bg-white/40 dark:hover:bg-slate-800/50 transition-all whitespace-nowrap"><i class="fas fa-chart-line text-lg min-w-[1.5rem] text-center"></i> <span class="font-semibold text-sm menu-text transition-opacity duration-300">Investimentos</span></button>
+            <button onclick="changeTab('logs')" id="btn-logs" class="nav-link w-full flex items-center px-5 py-3 rounded-xl gap-4 text-slate-600 dark:text-slate-400 hover:bg-white/40 dark:hover:bg-slate-800/50 transition-all whitespace-nowrap"><i class="fas fa-list-ul text-lg min-w-[1.5rem] text-center"></i> <span class="font-semibold text-sm menu-text transition-opacity duration-300">Extrato Completo</span></button>
+        </nav>
+        <div class="p-6 border-t border-white/40 dark:border-slate-700/50 space-y-2 overflow-hidden whitespace-nowrap bg-white/40 dark:bg-slate-900/40 backdrop-blur-md">
+            <div class="flex items-center gap-3 px-2 mb-4">
+                <div class="min-w-[2rem] w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-xs font-bold text-white shadow-md">EU</div>
+                <div class="overflow-hidden menu-text transition-opacity duration-300 flex flex-col items-start">
+                    <p id="user-email-text" class="text-xs font-bold text-slate-800 dark:text-slate-200 truncate">Sincronizando...</p>
+                    <span id="user-plan-badge" class="mt-1 text-[9px] font-black bg-slate-200 dark:bg-slate-800 text-slate-500 px-2 py-0.5 rounded-md uppercase tracking-widest hidden">...</span>
+                </div>
+            </div>
+            <button onclick="handleLogout()" class="w-full px-2 py-2 text-slate-600 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 flex items-center gap-4 transition-all rounded-xl hover:bg-white/50 dark:hover:bg-rose-900/30 whitespace-nowrap"><i class="fas fa-sign-out-alt text-lg min-w-[1.5rem] text-center"></i> <span class="text-sm font-semibold menu-text transition-opacity duration-300">Sair da conta</span></button>
+        </div>
+    </aside>
+
+    <nav class="md:hidden fixed bottom-0 left-0 w-full bg-white/60 dark:bg-slate-900/60 backdrop-blur-2xl border-t border-white/50 dark:border-slate-800/50 flex justify-around items-center pt-3 pb-5 z-50 shadow-[0_-10px_40px_rgba(0,0,0,0.05)]" style="padding-bottom: max(1.25rem, env(safe-area-inset-bottom));">
+        <button onclick="changeTab('dash')" id="m-btn-dash" class="mobile-nav-link active flex flex-col items-center gap-1 text-slate-500 dark:text-slate-400 w-14"><i class="fas fa-home text-xl"></i><span class="text-[9px] font-bold">Início</span></button>
+        <button onclick="changeTab('oraculo')" id="m-btn-oraculo" class="mobile-nav-link flex flex-col items-center gap-1 text-slate-500 dark:text-slate-400 w-14"><i class="fas fa-brain text-xl"></i><span class="text-[9px] font-bold">Oráculo</span></button>
+        <button onclick="changeTab('metas')" id="m-btn-metas" class="mobile-nav-link flex flex-col items-center gap-1 text-slate-500 dark:text-slate-400 w-14"><i class="fas fa-bullseye text-xl"></i><span class="text-[9px] font-bold">Metas</span></button>
+        <button onclick="changeTab('invest')" id="m-btn-invest" class="mobile-nav-link flex flex-col items-center gap-1 text-slate-500 dark:text-slate-400 w-14"><i class="fas fa-chart-line text-xl"></i><span class="text-[9px] font-bold">Investir</span></button>
+        <button onclick="changeTab('logs')" id="m-btn-logs" class="mobile-nav-link flex flex-col items-center gap-1 text-slate-500 dark:text-slate-400 w-14"><i class="fas fa-list-ul text-xl"></i><span class="text-[9px] font-bold">Extrato</span></button>
+        <button onclick="toggleTheme()" class="mobile-nav-link flex flex-col items-center gap-1 text-slate-500 dark:text-slate-400 w-14"><i id="m-theme-icon" class="fas fa-moon text-xl"></i><span class="text-[9px] font-bold">Tema</span></button>
+    </nav>
+
+    <main class="flex-1 flex flex-col overflow-y-auto w-full relative hide-scrollbar">
+        <header class="bg-white/30 dark:bg-slate-900/30 backdrop-blur-2xl p-5 md:px-10 border-b border-white/50 dark:border-slate-700/50 sticky top-0 z-30 flex justify-between items-center transition-colors shadow-sm" style="padding-top: max(1.25rem, env(safe-area-inset-top));">
+            <div class="flex items-center gap-4">
+                <button id="toggle-sidebar" class="hidden md:flex p-2 rounded-xl bg-white/40 dark:bg-slate-800/50 border border-white/60 dark:border-slate-700/50 text-slate-700 dark:text-slate-300 hover:bg-white/60 dark:hover:bg-slate-700 transition-colors shadow-sm">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div>
+                    <h2 id="page-title" class="text-xl font-black text-slate-900 dark:text-white tracking-tight">Visão Geral</h2>
+                    <p id="page-subtitle" class="text-xs text-slate-600 dark:text-slate-400 hidden md:block mt-0.5">Sintetizando a evolução do seu patrimônio com precisão.</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3 md:gap-4">
+                <button onclick="alternarSaldos()" class="w-10 h-10 rounded-full bg-white/40 dark:bg-slate-800/50 border border-white/60 dark:border-slate-700/50 text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-white transition-colors flex items-center justify-center shadow-sm" title="Ocultar valores"><i id="icone-olho" class="fas fa-eye"></i></button>
+                <button onclick="toggleTheme()" class="hidden md:flex w-10 h-10 rounded-full bg-white/40 dark:bg-slate-800/50 border border-white/60 dark:border-slate-700/50 text-slate-700 dark:text-slate-300 hover:text-amber-500 transition-colors items-center justify-center shadow-sm"><i id="theme-icon" class="fas fa-moon"></i></button>
+                <button onclick="fetchData(true)" class="w-10 h-10 rounded-full bg-white/40 dark:bg-slate-800/50 border border-white/60 dark:border-slate-700/50 text-blue-600 dark:text-blue-400 flex items-center justify-center hover:shadow-md transition-all"><i id="sync-icon" class="fas fa-sync-alt"></i></button>
+            </div>
+        </header>
+
+        <div class="p-4 md:p-8 space-y-8 max-w-7xl mx-auto w-full z-10">
+            <div id="sec-dash" class="section-content active space-y-8">
+                <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 bg-white/40 dark:bg-slate-800/40 backdrop-blur-xl p-2 pl-4 pr-2 rounded-2xl shadow-sm border border-white/60 dark:border-slate-700/50">
+                    <span class="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider hidden sm:block">Período de Análise</span>
+                    <input type="month" id="dashMonthFilter" onchange="fetchData(true)" class="w-full sm:w-auto bg-white/50 dark:bg-slate-900/50 border border-white/40 dark:border-slate-700 rounded-xl px-4 py-2 text-sm font-bold text-slate-800 dark:text-slate-200 outline-none focus:border-blue-500 transition-colors">
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
+                    <div class="bg-white/40 dark:bg-slate-800/40 backdrop-blur-xl p-6 rounded-3xl shadow-lg border border-white/70 dark:border-slate-700/50 transition-transform hover:-translate-y-1">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 rounded-xl bg-blue-600/10 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400 flex items-center justify-center"><i class="fas fa-wallet text-lg"></i></div>
+                            <p class="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider">Saldo Atual</p>
+                        </div>
+                        <h3 id="resumo-saldo" class="valor-financeiro text-2xl md:text-3xl font-black tracking-tight text-slate-900 dark:text-white">R$ 0,00</h3>
+                    </div>
+                    <div class="bg-white/40 dark:bg-slate-800/40 backdrop-blur-xl p-6 rounded-3xl shadow-lg border border-white/70 dark:border-slate-700/50 transition-transform hover:-translate-y-1">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 rounded-xl bg-emerald-600/10 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 flex items-center justify-center"><i class="fas fa-chart-line text-lg"></i></div>
+                            <p class="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider">Sobra Estimada</p>
+                        </div>
+                        <h3 id="projecao-saldo" class="valor-financeiro text-2xl md:text-3xl font-black tracking-tight text-emerald-700 dark:text-emerald-400">R$ 0,00</h3>
+                    </div>
+                    <div class="bg-white/40 dark:bg-slate-800/40 backdrop-blur-xl p-6 rounded-3xl shadow-lg border border-white/70 dark:border-slate-700/50 transition-transform hover:-translate-y-1">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 rounded-xl bg-rose-600/10 dark:bg-rose-500/20 text-rose-700 dark:text-rose-400 flex items-center justify-center"><i class="fas fa-thumbtack text-lg"></i></div>
+                            <p class="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider">Fixos Totais</p>
+                        </div>
+                        <h3 id="total-fixo-out" class="valor-financeiro text-2xl md:text-3xl font-black tracking-tight text-rose-700 dark:text-rose-400">R$ 0,00</h3>
+                    </div>
+                </div>
+                ```
+
+---
+
+**ESTOU PROCESSANDO O BLOCO 3 (O MOTOR JAVASCRIPT COMPLETO). DIGITE "PODE MANDAR O BLOCO 3" PARA FINALIZAR A MONTAGEM.**
