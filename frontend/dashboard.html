@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#060f14">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>NICKEL_IA | Gestão Premium</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -16,6 +19,12 @@
             darkMode: 'class',
             theme: {
                 extend: {
+                    colors: {
+                        n_fundo: '#060f14', /* Fundo azul ultra-escuro premium */
+                        n_cartao: '#11222e', /* Cor das caixas */
+                        n_amarelo: '#f9b932',
+                        n_verde: '#2ecc71'
+                    },
                     fontFamily: { sans: ['Inter', 'sans-serif'] },
                     animation: { 
                         'fade-in': 'fadeIn 0.3s ease-out forwards', 
@@ -42,6 +51,9 @@
     </script>
     
     <style>
+        /* Tira o quadrado azul feio ao clicar no celular */
+        * { -webkit-tap-highlight-color: transparent; }
+
         .section-content { display: none; }
         .section-content.active { display: block; animation: fadeIn 0.4s ease-out forwards; }
         
@@ -93,32 +105,25 @@
         .card-bg-orange { @apply bg-gradient-to-br from-orange-500 to-amber-700; }
         .card-bg-slate { @apply bg-gradient-to-br from-slate-400 to-slate-600; }
     </style>
+
     <style id="god-mode-led">
         :root {
-            --led-color-light: #0ea5e9; /* Azul Oceano */
-            --led-color-dark: #809B42;  /* Verde Nickel */
+            --led-color-light: #0ea5e9;
+            --led-color-dark: #809B42; 
         }
         
-        /* O CADEADO DE COR: Impede o JavaScript de forçar o verde no Modo Claro */
         html:not(.dark) { --led-color: var(--led-color-light) !important; }
         html.dark { --led-color: var(--led-color-dark) !important; }
 
-        /* Fundo Off-White Blindado apenas quando NÃO for Dark Mode */
         html:not(.dark) .absolute.inset-0.bg-gradient-to-br { background: #f8fafc !important; opacity: 1 !important; transition: background 0.5s ease; }
         html:not(.dark) #sidebar { background: #ffffff !important; border-right: 1px solid #e2e8f0 !important; transition: background 0.5s ease; }
 
-        /* ------------------------------------------- */
-        /* DARK MODE: O Neon Noturno, Clássico e Forte */
-        /* ------------------------------------------- */
         html.dark .tema-led-fixo {
             box-shadow: 0 0 5px var(--led-color), 0 0 10px rgba(128, 155, 66, 0.3) !important;
             border: 1px solid var(--led-color) !important;
             transition: all 0.3s ease;
         }
         
-        /* ------------------------------------------- */
-        /* WHITE MODE: A Aura Premium e Sutil         */
-        /* ------------------------------------------- */
         html:not(.dark) .tema-led-fixo {
             box-shadow: 0 10px 25px -8px rgba(14, 165, 233, 0.25), 0 0 8px rgba(14, 165, 233, 0.1) !important;
             border: 1px solid rgba(14, 165, 233, 0.3) !important;
@@ -126,9 +131,6 @@
             transition: all 0.3s ease;
         }
 
-        /* ------------------------------------------- */
-        /* ALINHAMENTOS E LOGO/ÍCONES DINÂMICOS        */
-        /* ------------------------------------------- */
         .ia-logo-text { color: var(--led-color) !important; transition: color 0.3s ease; }
         
         #sidebar nav button i { color: #94a3b8 !important; transition: color 0.3s ease; }
@@ -136,7 +138,6 @@
         
         #sidebar nav button.active i, #sidebar nav button:hover i { color: var(--led-color) !important; }
 
-        /* Bordas divisórias separadas por modo */
         html.dark #sidebar { border-right: 1px solid rgba(255,255,255,0.05) !important; }
         html.dark .border-b { border-bottom-color: rgba(255,255,255,0.05) !important; }
         html:not(.dark) .border-b { border-bottom-color: #e2e8f0 !important; }
@@ -147,16 +148,12 @@
         
         #sidebar.w-20 nav button { justify-content: center !important; padding-left: 0 !important; padding-right: 0 !important; }
 
-        /* ------------------------------------------- */
-        /* O DISJUNTOR DA LÂMPADA                      */
-        /* ------------------------------------------- */
         body.led-desligado .tema-led-fixo { box-shadow: none !important; }
         html.dark body.led-desligado .tema-led-fixo { border-color: rgba(255,255,255,0.05) !important; }
         html:not(.dark) body.led-desligado .tema-led-fixo { border-color: #e2e8f0 !important; }
     </style>
-
 </head>
-<body class="text-slate-800 dark:text-slate-200 flex flex-col md:flex-row h-screen overflow-hidden relative">
+<body class="bg-n_fundo dark:bg-n_fundo antialiased transition-colors duration-300">
 
     <div id="toast-container" class="fixed top-5 right-5 z-[200] flex flex-col gap-3 pointer-events-none"></div>
 
