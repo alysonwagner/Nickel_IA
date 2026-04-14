@@ -3,9 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="theme-color" content="#060f14">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>NICKEL_IA | Gestão Premium</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -19,12 +16,6 @@
             darkMode: 'class',
             theme: {
                 extend: {
-                    colors: {
-                        n_fundo: '#060f14', /* Fundo azul ultra-escuro premium */
-                        n_cartao: '#11222e', /* Cor das caixas */
-                        n_amarelo: '#f9b932',
-                        n_verde: '#2ecc71'
-                    },
                     fontFamily: { sans: ['Inter', 'sans-serif'] },
                     animation: { 
                         'fade-in': 'fadeIn 0.3s ease-out forwards', 
@@ -51,9 +42,6 @@
     </script>
     
     <style>
-        /* Tira o quadrado azul feio ao clicar no celular */
-        * { -webkit-tap-highlight-color: transparent; }
-
         .section-content { display: none; }
         .section-content.active { display: block; animation: fadeIn 0.4s ease-out forwards; }
         
@@ -105,25 +93,32 @@
         .card-bg-orange { @apply bg-gradient-to-br from-orange-500 to-amber-700; }
         .card-bg-slate { @apply bg-gradient-to-br from-slate-400 to-slate-600; }
     </style>
-
     <style id="god-mode-led">
         :root {
-            --led-color-light: #0ea5e9;
-            --led-color-dark: #809B42; 
+            --led-color-light: #0ea5e9; /* Azul Oceano */
+            --led-color-dark: #809B42;  /* Verde Nickel */
         }
         
+        /* O CADEADO DE COR: Impede o JavaScript de forçar o verde no Modo Claro */
         html:not(.dark) { --led-color: var(--led-color-light) !important; }
         html.dark { --led-color: var(--led-color-dark) !important; }
 
+        /* Fundo Off-White Blindado apenas quando NÃO for Dark Mode */
         html:not(.dark) .absolute.inset-0.bg-gradient-to-br { background: #f8fafc !important; opacity: 1 !important; transition: background 0.5s ease; }
         html:not(.dark) #sidebar { background: #ffffff !important; border-right: 1px solid #e2e8f0 !important; transition: background 0.5s ease; }
 
+        /* ------------------------------------------- */
+        /* DARK MODE: O Neon Noturno, Clássico e Forte */
+        /* ------------------------------------------- */
         html.dark .tema-led-fixo {
             box-shadow: 0 0 5px var(--led-color), 0 0 10px rgba(128, 155, 66, 0.3) !important;
             border: 1px solid var(--led-color) !important;
             transition: all 0.3s ease;
         }
         
+        /* ------------------------------------------- */
+        /* WHITE MODE: A Aura Premium e Sutil         */
+        /* ------------------------------------------- */
         html:not(.dark) .tema-led-fixo {
             box-shadow: 0 10px 25px -8px rgba(14, 165, 233, 0.25), 0 0 8px rgba(14, 165, 233, 0.1) !important;
             border: 1px solid rgba(14, 165, 233, 0.3) !important;
@@ -131,6 +126,9 @@
             transition: all 0.3s ease;
         }
 
+        /* ------------------------------------------- */
+        /* ALINHAMENTOS E LOGO/ÍCONES DINÂMICOS        */
+        /* ------------------------------------------- */
         .ia-logo-text { color: var(--led-color) !important; transition: color 0.3s ease; }
         
         #sidebar nav button i { color: #94a3b8 !important; transition: color 0.3s ease; }
@@ -138,6 +136,7 @@
         
         #sidebar nav button.active i, #sidebar nav button:hover i { color: var(--led-color) !important; }
 
+        /* Bordas divisórias separadas por modo */
         html.dark #sidebar { border-right: 1px solid rgba(255,255,255,0.05) !important; }
         html.dark .border-b { border-bottom-color: rgba(255,255,255,0.05) !important; }
         html:not(.dark) .border-b { border-bottom-color: #e2e8f0 !important; }
@@ -148,16 +147,20 @@
         
         #sidebar.w-20 nav button { justify-content: center !important; padding-left: 0 !important; padding-right: 0 !important; }
 
+        /* ------------------------------------------- */
+        /* O DISJUNTOR DA LÂMPADA                      */
+        /* ------------------------------------------- */
         body.led-desligado .tema-led-fixo { box-shadow: none !important; }
         html.dark body.led-desligado .tema-led-fixo { border-color: rgba(255,255,255,0.05) !important; }
         html:not(.dark) body.led-desligado .tema-led-fixo { border-color: #e2e8f0 !important; }
     </style>
+
 </head>
-<body class="bg-n_fundo dark:bg-n_fundo antialiased transition-colors duration-300">
+<body class="text-slate-800 dark:text-slate-200 flex flex-col md:flex-row min-h-screen md:h-screen md:overflow-hidden overflow-x-hidden relative">
 
     <div id="toast-container" class="fixed top-5 right-5 z-[200] flex flex-col gap-3 pointer-events-none"></div>
 
-    <div class="absolute inset-0 bg-gradient-to-br from-slate-100 via-slate-200 to-slate-300 dark:from-[#011c27] dark:via-[#012E40] dark:to-slate-900 opacity-90 dark:opacity-100 -z-20"></div>
+    <div class="fixed inset-0 bg-gradient-to-br from-slate-100 via-slate-200 to-slate-300 dark:from-[#011c27] dark:via-[#012E40] dark:to-slate-900 opacity-90 dark:opacity-100 -z-20"></div>
 
     <aside id="sidebar" class="hidden md:flex w-72 bg-white/40 dark:bg-slate-900/60 backdrop-blur-2xl border-r border-white/50 dark:border-[#012E40]/50 flex-col shrink-0 z-20 shadow-2xl transition-all duration-300">
         
@@ -243,39 +246,33 @@
     
     <div class="flex flex-col sm:flex-row justify-between sm:items-end gap-4 mb-2 mt-4">
         <div>
-            <div class="mb-10 px-2">
-    
-    <h2 class="text-3xl font-extrabold text-white mb-1 tracking-tight">Resumo Financeiro</h2>
-    <p class="text-xs text-gray-400 font-semibold tracking-widest uppercase mb-8">Sua fotografia atual</p>
-
-    <div class="mb-8">
-        <button class="w-full py-4 px-6 bg-n_cartao border border-n_verde text-white rounded-2xl font-medium shadow-md flex justify-between items-center transition-transform active:scale-95">
-            <span class="text-lg">abril de 2026</span>
-            <i class="fas fa-chevron-down text-n_verde"></i>
-        </button>
+            <h2 class="text-2xl md:text-3xl font-black tracking-tight text-slate-800 dark:text-white transition-colors">Resumo Financeiro</h2>
+            <p class="text-xs font-bold text-slate-500 dark:text-slate-400 mt-1 uppercase tracking-widest">Sua fotografia atual</p>
+        </div>
+        <div class="flex items-center gap-4 bg-white/40 dark:bg-slate-800/40 backdrop-blur-xl p-2 pl-4 pr-2 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700/50">
+            <span class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest hidden sm:block">Período</span>
+            <input type="month" id="dashMonthFilter" onchange="fetchData(true)" class="w-full sm:w-auto bg-white/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2 text-sm font-bold text-slate-800 dark:text-white outline-none transition-colors" style="border-color: var(--led-color);">
+        </div>
     </div>
 
-    <div class="card-bg-black rounded-[2rem] p-8 relative overflow-hidden shadow-2xl border border-gray-800">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         
-        <div class="absolute top-0 right-0 -mr-10 -mt-10 w-40 h-40 rounded-full bg-blue-500 opacity-10 blur-3xl"></div>
-
-        <div class="flex justify-between items-start mb-8 relative z-10">
-            <div class="w-14 h-14 rounded-2xl bg-gray-800/60 flex items-center justify-center backdrop-blur-md border border-gray-700">
-                <i class="fas fa-wallet text-gray-300 text-2xl"></i>
-            </div>
+        <div class="md:col-span-1 bg-slate-900 p-6 md:p-8 rounded-3xl shadow-xl relative overflow-hidden group border border-slate-700">
+            <div class="absolute -right-10 -top-10 w-40 h-40 rounded-full blur-3xl pointer-events-none opacity-20 group-hover:opacity-40 transition-opacity duration-700" style="background-color: var(--led-color);"></div>
             
-            <button class="text-gray-400 hover:text-white p-2">
-                <i class="fas fa-eye text-xl"></i>
-            </button>
+            <div class="relative z-10 flex justify-between items-start mb-6">
+                <div class="w-10 h-10 rounded-2xl bg-white/10 flex items-center justify-center backdrop-blur-md border border-white/10">
+                    <i class="fas fa-wallet text-white text-lg"></i>
+                </div>
+                <button onclick="toggleSaldos()" class="text-white/50 hover:text-white transition-colors" title="Ocultar Valores">
+                    <i id="eye-icon-dash" class="fas fa-eye"></i>
+                </button>
+            </div>
+            <div class="relative z-10">
+                <p class="text-[10px] font-bold text-white/50 uppercase tracking-widest mb-1">Saldo Atual</p>
+                <h3 id="resumo-saldo" class="text-3xl md:text-4xl font-black text-white tracking-tight valor-financeiro">R$ 0,00</h3>
+            </div>
         </div>
-
-        <div class="relative z-10">
-            <p class="text-sm text-gray-400 font-medium tracking-widest uppercase mb-2">Saldo Atual</p>
-            <h3 class="text-5xl font-extrabold text-white tracking-tighter">R$ 0,00</h3>
-        </div>
-    </div>
-    
-</div>
 
         <div class="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-6">
             
@@ -426,73 +423,69 @@
 
             <div id="sec-oraculo" class="section-content hidden space-y-6 max-w-7xl mx-auto w-full px-4 md:px-8 mt-4">
     
-    <div id="premium-wrap-oraculo" class="space-y-6">
+    <div class="flex flex-col sm:flex-row justify-between sm:items-end gap-4 mb-6">
+        <div>
+            <h2 class="text-2xl md:text-3xl font-black tracking-tight text-white">Oráculo IA</h2>
+            <p class="text-xs font-bold text-slate-400 mt-1 uppercase tracking-widest">Sócio Técnico & Análise Predita</p>
+        </div>
+        <button onclick="gerarDiagnosticoOraculo()" id="btn-gerar-ia" class="btn-matrix w-full sm:w-auto px-6 py-3 font-bold rounded-xl shadow-lg shadow-blue-500/20 text-sm flex items-center justify-center gap-2 hover:scale-105 transition-transform bg-blue-600 text-white border border-blue-500">
+            <i class="fas fa-microchip"></i> Gerar Diagnóstico
+        </button>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
-        <div class="flex flex-col sm:flex-row justify-between sm:items-end gap-4 mb-6">
-            <div>
-                <h2 class="text-2xl md:text-3xl font-black tracking-tight text-white">Oráculo IA</h2>
-                <p class="text-xs font-bold text-slate-400 mt-1 uppercase tracking-widest">Sócio Técnico & Análise Predita</p>
-            </div>
-            <button onclick="gerarDiagnosticoOraculo()" id="btn-gerar-ia" class="btn-matrix w-full sm:w-auto px-6 py-3 font-bold rounded-xl shadow-lg shadow-blue-500/20 text-sm flex items-center justify-center gap-2 hover:scale-105 transition-transform bg-blue-600 text-white border border-blue-500">
-                <i class="fas fa-microchip"></i> Gerar Diagnóstico
-            </button>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2 bg-slate-900 rounded-3xl shadow-xl border border-slate-700 p-6 md:p-8 relative overflow-hidden flex flex-col">
+            <div class="absolute -right-10 -top-10 w-40 h-40 rounded-full blur-3xl pointer-events-none opacity-10 bg-blue-500"></div>
             
-            <div class="lg:col-span-2 bg-slate-900 rounded-3xl shadow-xl border border-slate-700 p-6 md:p-8 relative overflow-hidden flex flex-col">
-                <div class="absolute -right-10 -top-10 w-40 h-40 rounded-full blur-3xl pointer-events-none opacity-10 bg-blue-500"></div>
-                
-                <div class="flex items-center gap-4 mb-6 relative z-10 border-b border-slate-800 pb-4">
-                    <div class="w-12 h-12 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center text-xl border border-blue-500/20"><i class="fas fa-brain"></i></div>
-                    <div>
-                        <h3 class="text-lg font-black text-white tracking-tight">Painel de Decisão</h3>
-                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Leitura Integrada de Banco de Dados</p>
-                    </div>
-                </div>
-
-                <div class="flex-1 bg-slate-800/50 border border-slate-700 rounded-2xl p-5 md:p-6 overflow-y-auto relative z-10 h-64 md:h-auto">
-                    <div class="flex gap-4 items-start">
-                        <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white shrink-0 mt-1 shadow-md">
-                            <i class="fas fa-robot text-xs"></i>
-                        </div>
-                        <div id="oraculo-bussola-chat" class="text-sm text-slate-300 leading-relaxed space-y-3 font-medium">
-                            <p>Gestor, o motor está em stand-by.</p>
-                            <p class="text-slate-500 text-xs">Clique em "Gerar Diagnóstico" para que eu possa varrer a API, analisar suas despesas, cruzar com seu patrimônio e emitir o relatório de estratégia de capital.</p>
-                        </div>
-                    </div>
+            <div class="flex items-center gap-4 mb-6 relative z-10 border-b border-slate-800 pb-4">
+                <div class="w-12 h-12 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center text-xl border border-blue-500/20"><i class="fas fa-brain"></i></div>
+                <div>
+                    <h3 class="text-lg font-black text-white tracking-tight">Painel de Decisão</h3>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Leitura Integrada de Banco de Dados</p>
                 </div>
             </div>
 
-            <div class="space-y-6">
-                
-                <div class="bg-slate-900 p-6 rounded-3xl shadow-xl border border-slate-700 relative overflow-hidden flex flex-col justify-center items-center text-center">
-                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Health Score Patrimonial</p>
-                    <div class="flex items-baseline gap-1">
-                        <h4 id="health-score-value" class="text-5xl font-black text-slate-500 drop-shadow-md">--</h4>
-                        <span class="text-sm font-bold text-slate-600">/100</span>
+            <div class="flex-1 bg-slate-800/50 border border-slate-700 rounded-2xl p-5 md:p-6 overflow-y-auto relative z-10 h-64 md:h-auto">
+                <div class="flex gap-4 items-start">
+                    <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white shrink-0 mt-1 shadow-md">
+                        <i class="fas fa-robot text-xs"></i>
                     </div>
-                    <div class="w-full bg-slate-800 rounded-full h-2 mt-4 overflow-hidden border border-slate-700">
-                        <div id="health-score-bar" class="h-2 rounded-full bg-slate-600 transition-all duration-1000 w-0"></div>
+                    <div id="oraculo-bussola-chat" class="text-sm text-slate-300 leading-relaxed space-y-3 font-medium">
+                        <p>Gestor, o motor está em stand-by.</p>
+                        <p class="text-slate-500 text-xs">Clique em "Gerar Diagnóstico" para que eu possa varrer a API, analisar suas despesas, cruzar com seu patrimônio e emitir o relatório de estratégia de capital.</p>
                     </div>
                 </div>
-
-                <div class="bg-slate-900 p-6 rounded-3xl shadow-xl border border-slate-700">
-                    <div class="flex items-center gap-3 mb-4">
-                        <div class="w-8 h-8 rounded-lg bg-orange-500/10 text-orange-500 flex items-center justify-center text-sm border border-orange-500/20"><i class="fas fa-shield-alt"></i></div>
-                        <h3 class="text-sm font-black text-white tracking-tight uppercase">Radar de Risco</h3>
-                    </div>
-                    <div id="oraculo-alertas" class="space-y-3">
-                        <div class="p-4 text-center text-slate-500 border border-dashed border-slate-700 rounded-xl bg-slate-800/30 text-xs font-bold">
-                            Aguardando leitura do sistema...
-                        </div>
-                    </div>
-                </div>
-
             </div>
         </div>
-    </div> <div id="paywall-oraculo" class="hidden"></div>
-    
+
+        <div class="space-y-6">
+            
+            <div class="bg-slate-900 p-6 rounded-3xl shadow-xl border border-slate-700 relative overflow-hidden flex flex-col justify-center items-center text-center">
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Health Score Patrimonial</p>
+                <div class="flex items-baseline gap-1">
+                    <h4 id="health-score-value" class="text-5xl font-black text-slate-500 drop-shadow-md">--</h4>
+                    <span class="text-sm font-bold text-slate-600">/100</span>
+                </div>
+                <div class="w-full bg-slate-800 rounded-full h-2 mt-4 overflow-hidden border border-slate-700">
+                    <div id="health-score-bar" class="h-2 rounded-full bg-slate-600 transition-all duration-1000 w-0"></div>
+                </div>
+            </div>
+
+            <div class="bg-slate-900 p-6 rounded-3xl shadow-xl border border-slate-700">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-8 h-8 rounded-lg bg-orange-500/10 text-orange-500 flex items-center justify-center text-sm border border-orange-500/20"><i class="fas fa-shield-alt"></i></div>
+                    <h3 class="text-sm font-black text-white tracking-tight uppercase">Radar de Risco</h3>
+                </div>
+                <div id="oraculo-alertas" class="space-y-3">
+                    <div class="p-4 text-center text-slate-500 border border-dashed border-slate-700 rounded-xl bg-slate-800/30 text-xs font-bold">
+                        Aguardando leitura do sistema...
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
 </div>
 
             <div id="sec-fixas" class="section-content space-y-8 hidden max-w-7xl mx-auto w-full px-4 md:px-8">
