@@ -158,6 +158,21 @@
 </head>
 <body class="text-slate-800 dark:text-slate-200 flex flex-col md:flex-row min-h-screen md:h-screen md:overflow-hidden overflow-x-hidden relative">
 
+    <div class="md:hidden fixed top-0 left-0 right-0 z-50 bg-[#011c27]/90 backdrop-blur-lg border-b border-slate-700/50 px-4 h-16 flex items-center justify-between">
+    <h1 class="text-xl font-bold text-white tracking-tight">Visão Geral</h1>
+    <div class="flex items-center gap-2">
+        <button class="w-9 h-9 rounded-full bg-slate-800 flex items-center justify-center text-blue-400 border border-slate-700">
+            <i class="fab fa-telegram-plane"></i>
+        </button>
+        <button class="w-9 h-9 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 border border-slate-700">
+            <i class="fas fa-eye"></i>
+        </button>
+        <button class="w-9 h-9 rounded-full bg-slate-800 flex items-center justify-center text-emerald-400 border border-slate-700">
+            <i class="fas fa-sync-alt"></i>
+        </button>
+    </div>
+</div>
+
     <div id="toast-container" class="fixed top-5 right-5 z-[200] flex flex-col gap-3 pointer-events-none"></div>
 
     <div class="fixed inset-0 bg-gradient-to-br from-slate-100 via-slate-200 to-slate-300 dark:from-[#011c27] dark:via-[#012E40] dark:to-slate-900 opacity-90 dark:opacity-100 -z-20"></div>
@@ -3805,6 +3820,35 @@ function gerarDiagnosticoOraculo() {
         </div>
     </div>
 </div>
+
+        <nav class="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-slate-900/95 backdrop-blur-xl border-t border-slate-700/50 pt-2 pb-6 px-1">
+    <div class="flex justify-between items-center">
+        <button class="flex-1 flex flex-col items-center gap-1 text-emerald-400">
+            <i class="fas fa-home text-lg"></i>
+            <span class="text-[9px] font-bold uppercase tracking-tighter">Início</span>
+        </button>
+        <button class="flex-1 flex flex-col items-center gap-1 text-slate-400">
+            <i class="fas fa-brain text-lg"></i>
+            <span class="text-[9px] font-bold uppercase tracking-tighter">Oráculo</span>
+        </button>
+        <button class="flex-1 flex flex-col items-center gap-1 text-slate-400">
+            <i class="fas fa-credit-card text-lg"></i>
+            <span class="text-[9px] font-bold uppercase tracking-tighter">Cartões</span>
+        </button>
+        <button class="flex-1 flex flex-col items-center gap-1 text-slate-400">
+            <i class="fas fa-chart-line text-lg"></i>
+            <span class="text-[9px] font-bold uppercase tracking-tighter">Investir</span>
+        </button>
+        <button class="flex-1 flex flex-col items-center gap-1 text-slate-400">
+            <i class="fas fa-list-ul text-lg"></i>
+            <span class="text-[9px] font-bold uppercase tracking-tighter">Extrato</span>
+        </button>
+        <button class="flex-1 flex flex-col items-center gap-1 text-slate-400">
+            <i class="fas fa-sun text-lg"></i>
+            <span class="text-[9px] font-bold uppercase tracking-tighter">Tema</span>
+        </button>
+    </div>
+</nav>
 
 </body>
 </html>
